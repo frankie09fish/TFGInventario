@@ -1,0 +1,45 @@
+may 01, 2018 12:37:09 AM bitacora.Bitacora <init>
+INFORMACIÓN: Bitacora inicializada
+may 01, 2018 12:37:09 AM modelo.ImplementacionDAOPostgres insertarUsuario
+INFORMACIÓN: Estableciendo conexión con Base de datos
+may 01, 2018 12:37:09 AM modelo.ImplementacionDAOPostgres insertarUsuario
+INFORMACIÓN: Insertando datos de usuario
+may 01, 2018 12:37:09 AM modelo.PostgreSQLDBHelper insertarUsuario
+ADVERTENCIA: Error al insertar usaurio: org.postgresql.util.PSQLException: ERROR: una cadena de caracteres entre comillas está inconclusa en o cerca de «',12345a);»
+  Position: 205
+may 01, 2018 12:40:40 AM bitacora.Bitacora <init>
+INFORMACIÓN: Bitacora inicializada
+may 01, 2018 12:40:40 AM modelo.ImplementacionDAOPostgres insertarUsuario
+INFORMACIÓN: Estableciendo conexión con Base de datos
+may 01, 2018 12:40:40 AM modelo.ImplementacionDAOPostgres insertarUsuario
+INFORMACIÓN: Insertando datos de usuario
+may 01, 2018 12:40:40 AM modelo.PostgreSQLDBHelper insertarUsuario
+ADVERTENCIA: Error al insertar usaurio: org.postgresql.util.PSQLException: ERROR: no existe la relación «InventarioBD.usuarios»
+  Position: 13
+may 01, 2018 12:41:23 AM bitacora.Bitacora <init>
+INFORMACIÓN: Bitacora inicializada
+may 01, 2018 12:41:23 AM modelo.ImplementacionDAOPostgres insertarUsuario
+INFORMACIÓN: Estableciendo conexión con Base de datos
+may 01, 2018 12:41:23 AM modelo.ImplementacionDAOPostgres insertarUsuario
+INFORMACIÓN: Insertando datos de usuario
+may 01, 2018 12:41:23 AM modelo.PostgreSQLDBHelper insertarUsuario
+INFORMACIÓN: Usuario insertado correctamente
+may 01, 2018 11:30:30 PM bitacora.Bitacora <init>
+INFORMACIÓN: Bitacora inicializada
+may 01, 2018 11:30:30 PM modelo.ImplementacionDAOPostgres insertarUsuario
+INFORMACIÓN: Estableciendo conexión con Base de datos
+may 01, 2018 11:30:31 PM modelo.PostgreSQLDBHelper connectDatabase
+ADVERTENCIA: Error al conectar con la base de datos de PostgreSQL: org.postgresql.util.PSQLException: Conexión rechazada. Verifique que el nombre del Host y el puerto sean correctos y que postmaster este aceptando conexiones TCP/IP.
+may 01, 2018 11:30:31 PM modelo.ImplementacionDAOPostgres insertarUsuario
+INFORMACIÓN: Insertando datos de usuario
+may 01, 2018 11:30:31 PM modelo.PostgreSQLDBHelper insertarUsuario
+GRAVE: Error al insertar usaurio: java.lang.NullPointerException
+may 01, 2018 11:39:33 PM bitacora.Bitacora <init>
+INFORMACIÓN: Bitacora inicializada
+may 01, 2018 11:39:33 PM modelo.ImplementacionDAOPostgres insertarUsuario
+INFORMACIÓN: Estableciendo conexión con Base de datos
+may 01, 2018 11:39:34 PM modelo.ImplementacionDAOPostgres insertarUsuario
+INFORMACIÓN: Insertando datos de usuario
+may 01, 2018 11:39:34 PM modelo.PostgreSQLDBHelper insertarUsuario
+GRAVE: Error al insertar usaurio: org.postgresql.util.PSQLException: ERROR: llave duplicada viola restricción de unicidad «usuario_pkey»
+  Detail: Ya existe la llave (cedula)=(302360145).
