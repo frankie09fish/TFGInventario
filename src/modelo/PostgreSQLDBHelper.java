@@ -10,6 +10,9 @@ package modelo;
 import java.sql.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.ArrayList;
+import java.util.List;
+import modelo.dao.UsuarioDAO;
 
 public class PostgreSQLDBHelper {
     
@@ -46,20 +49,18 @@ public class PostgreSQLDBHelper {
     public void insertarUsuario(Connection con, int ced , String nom, String primerAp, String segundoAp , String corr, String tip,  String contr ){
         //Abrimos la conexión y la iniciamos
         try{
-            Statement stmt = con.createStatement();
-
-            //Una variable String para almacenar la sentencia SQL
-            String query = "INSERT INTO \"" + DBContract.DBInfo.schemaNombre + "\".\"" + DBContract.DBInfo.tabUsuario + "\" (\"" + DBContract.DBInfo.cedUsuario +  "\",\"" + 
-                    DBContract.DBInfo.nombreUsuario + "\",\"" + DBContract.DBInfo.primerApellidoUsuario + "\",\"" + DBContract.DBInfo.segundoApellidoUsuario + 
-                    "\",\"" + DBContract.DBInfo.correoUsuario + "\",\"" + DBContract.DBInfo.tipUsuario + "\",\"" + DBContract.DBInfo.contrasenaUsuario +  
-                    "\") VALUES(" + ced + ",'"+ nom + "','" + primerAp + "','" + segundoAp + "','" + corr + "','" + tip + "','" + contr +  "');";
-
-            stmt.executeUpdate(query);
-
-            //Cerramos la conexión
-            stmt.execute("END");
-            LOGGER.log(Level.INFO, "Usuario insertado correctamente");
-            stmt.close();
+            CallableStatement cst = con.prepareCall("{call \"InventarioBD\".\"insertarUsuario\"(?,?,?,?,?,?,?)}");
+            
+            cst.setInt(1, ced);
+            cst.setString(2,nom);
+            cst.setString(3,primerAp);
+            cst.setString(4,segundoAp);
+            cst.setString(5,corr);
+            cst.setString(6,tip);
+            cst.setString(7,contr);
+            
+            cst.execute();
+            cst.close();
             con.close();
         }
         catch( Exception e ){
@@ -71,25 +72,35 @@ public class PostgreSQLDBHelper {
 
     }
     
-    public void mostrarUsuario(Connection con, int cedula){
-        
-        try{
+    public UsuarioDAO mostrarUsuario(Connection con, int cedula){
+
+        ResultSet rs = null;
+
+         UsuarioDAO usuarioObtenido = new UsuarioDAO();
+
+        try{      
             //Abrimos la conexión y la iniciamos
             Statement stmt = con.createStatement();
-            /*Un ResultSet es como en .NET un DataSet, un arreglo temporal donde se
-            almacenará el resultado de la consulta SQL*/
-            ResultSet rs;
+            //Un ResultSet es como en .NET un DataSet, un arreglo temporal donde se
+            //almacenará el resultado de la consulta SQL
+           
             //Una variable String para almacenar la sentencia SQL
-            String query = "SELECT * FROM \""  + DBContract.DBInfo.schemaNombre + "\".\"" + DBContract.DBInfo.tabUsuario  + "\" WHERE \"" + DBContract.DBInfo.cedUsuario + 
+            System.out.println("Antes de ejecutar select obtener usuario");
+            String query = "SELECT " + DBContract.DBInfo.cedUsuario + "," + DBContract.DBInfo.nombreUsuario + ","+ DBContract.DBInfo.primerApellidoUsuario + 
+                    "," + DBContract.DBInfo.segundoApellidoUsuario + "," + DBContract.DBInfo.correoUsuario + "," + DBContract.DBInfo.tipUsuario +
+                    " FROM \""  + DBContract.DBInfo.schemaNombre + "\".\"" + DBContract.DBInfo.tabUsuario  + "\" WHERE \"" + DBContract.DBInfo.cedUsuario + 
                     "\" = " + cedula;
             //En el ResultSet guardamos el resultado de ejecutar la consulta
             rs = stmt.executeQuery(query);
             //En un ciclo while recorremos cada fila del resultado de nuestro Select
             while ( rs.next()){
-                /*Aqui practicamente podemos hacer lo que deseemos con el resultado,
-                en mi caso solo lo mande a imprimir*/
-                System.out.println(rs.getString("Id") + " " + rs.getString("Nombre") + " " +
-                rs.getString("primerApellido") + " " + rs.getString("segundoApellido") + " " + rs.getInt("cedula") + " " + rs.getInt("tipo"));
+                
+                usuarioObtenido.setCedula(rs.getInt("cedula"));
+                usuarioObtenido.setNombre(rs.getString("nombre"));
+                usuarioObtenido.setPrimerApellido(rs.getString("primerapellido"));
+                usuarioObtenido.setSegundoApellido(rs.getString("segundoapellido"));
+                usuarioObtenido.setCorreo(rs.getString("correo"));
+                usuarioObtenido.setTipo(rs.getString("tipo"));     
             }
             //Cerramos la conexión
             stmt.execute("END");
@@ -100,52 +111,70 @@ public class PostgreSQLDBHelper {
             //Por si ocurre un error
              System.out.println(e.getMessage());
             e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error al obtener usaurio: " + e);
         }
+       return usuarioObtenido;
     }
     
-    public void listarUsuario(Connection con){
+    
+    public List listarUsuario(Connection con){
+        ResultSet rs = null;
+        UsuarioDAO usuarioDAO = new UsuarioDAO();
+         List<UsuarioDAO> listaValores = new ArrayList<UsuarioDAO>();
         try{
+             
+            
             //Abrimos la conexión y la iniciamos
             Statement stmt = con.createStatement();
             /*Un ResultSet es como en .NET un DataSet, un arreglo temporal donde se
             almacenará el resultado de la consulta SQL*/
-            ResultSet rs;
+            
             //Una variable String para almacenar la sentencia SQL
-            String query = "SELECT * FROM \"" + DBContract.DBInfo.schemaNombre + "\".\"" + DBContract.DBInfo.tabUsuario + "\"";
+             String query = "SELECT " + DBContract.DBInfo.cedUsuario + "," + DBContract.DBInfo.nombreUsuario + ","+ DBContract.DBInfo.primerApellidoUsuario + 
+                    "," + DBContract.DBInfo.segundoApellidoUsuario + "," + DBContract.DBInfo.correoUsuario + "," + DBContract.DBInfo.tipUsuario +
+                    " FROM \""  + DBContract.DBInfo.schemaNombre + "\".\"" + DBContract.DBInfo.tabUsuario + "\"";
             //En el ResultSet guardamos el resultado de ejecutar la consulta
+            System.out.println("Antes de ejecutar el query");
             rs = stmt.executeQuery(query);
+            System.out.println("Despues de ejecutar el query");
             //En un ciclo while recorremos cada fila del resultado de nuestro Select
+                      
             while ( rs.next()){
-                /*Aqui practicamente podemos hacer lo que deseemos con el resultado,
-                en mi caso solo lo mande a imprimir*/
-                System.out.println(rs.getString("Id") + " " + rs.getString("Nombre") + " " +
-                rs.getString("primerApellido") + " " + rs.getString("segundoApellido") + " " + rs.getInt("cedula") + " " + rs.getInt("tipo"));
+
+                usuarioDAO.setCedula(rs.getInt("cedula"));
+                usuarioDAO.setNombre(rs.getString("nombre"));
+                usuarioDAO.setPrimerApellido(rs.getString("primerapellido"));
+                usuarioDAO.setSegundoApellido(rs.getString("segundoapellido"));
+                usuarioDAO.setCorreo(rs.getString("correo"));
+                usuarioDAO.setTipo(rs.getString("tipo"));
+                listaValores.add(usuarioDAO);
+                System.out.println(rs.getInt("cedula") + " " + rs.getString("Nombre") + " " +
+                rs.getString("primerApellido") + " " + rs.getString("segundoApellido") + " " + rs.getString("correo") + " " + rs.getString("tipo"));
             }
+            
             //Cerramos la conexión
             stmt.execute("END");
             stmt.close();
             con.close();
+            
         }
         catch( Exception e ){
             //Por si ocurre un error
              System.out.println(e.getMessage());
+             LOGGER.log(Level.SEVERE, "Error al obtener lista de usaurios: " + e);
             e.printStackTrace();
         }
+        return listaValores;
     }
     
     public void eliminarUsuario(Connection con, int ced){
         try{
-            Statement stmt = con.createStatement();
+            CallableStatement cst = con.prepareCall("{call \"InventarioBD\".\"eliminarUsuario\"(?)}");
+            cst.setInt(1, ced);
+            
+            cst.execute();
+            cst.close();
 
-            //Una variable String para almacenar la sentencia SQL
-            String query = "DELETE FROM \"" + DBContract.DBInfo.schemaNombre + "\".\"" + DBContract.DBInfo.tabUsuario + 
-                    "\" WHERE \"" + DBContract.DBInfo.cedUsuario + "\" =" + ced;
-
-            stmt.executeUpdate(query);
-
-            //Cerramos la conexión
-            stmt.execute("END");
-            stmt.close();
             con.close();
         }
         catch( Exception e ){
@@ -155,9 +184,21 @@ public class PostgreSQLDBHelper {
         }
     }
     
-    public void modificarUsuario(Connection con, int cedVieja, String nom, String pA, String sA, String corr ,int ced, String tip, String contrasena){
+    public void modificarUsuario(Connection con, int cedVieja,int ced, String nom, String pA, String sA, String corr , String tip){
          try{
-            Statement stmt = con.createStatement();
+            CallableStatement cst = con.prepareCall("{call \"InventarioBD\".\"actualizarUsuario\"(?,?,?,?,?,?,?)}");
+            cst.setInt(1, cedVieja);
+            cst.setInt(2,ced);
+            cst.setString(3, nom);
+            cst.setString(4, pA);
+            cst.setString(5, sA);
+            cst.setString(6, corr);
+            cst.setString(7, tip);
+            
+            cst.execute();
+            cst.close();
+             /*
+             Statement stmt = con.createStatement();
 
             //Una variable String para almacenar la sentencia SQL
             String query = "UPDATE \"" + DBContract.DBInfo.schemaNombre + "\".\"" + DBContract.DBInfo.tabUsuario + 
@@ -172,6 +213,7 @@ public class PostgreSQLDBHelper {
             //Cerramos la conexión
             stmt.execute("END");
             stmt.close();
+            */
             con.close();
         }
         catch( Exception e ){
@@ -179,6 +221,38 @@ public class PostgreSQLDBHelper {
         System.out.println(e.getMessage());
         e.printStackTrace();
         }
+    }
+    
+    public void insertarArticulo(Connection con, String nom, String desc, int cant, String cA, String fE, float cost, String cate, String oC ){
+         //Abrimos la conexión y la iniciamos
+        try{
+           
+
+            Statement stmt = con.createStatement();
+           
+
+            //Una variable String para almacenar la sentencia SQL
+            String query = "INSERT INTO \"" + DBContract.DBInfo.schemaNombre + "\".\"" + DBContract.DBInfo.tabProducto + "\" (\"" + DBContract.DBInfo.nombreProducto +  "\",\"" + 
+                    DBContract.DBInfo.descripcionProducto + "\",\"" + DBContract.DBInfo.cantidadProducto + "\",\"" + DBContract.DBInfo.codigoActivo + "\",\"" + DBContract.DBInfo.fechaEntrada + 
+                    "\",\"" + DBContract.DBInfo.costoProducto + "\",\"" + DBContract.DBInfo.categoriaProducto +  
+                    "\",\"" + DBContract.DBInfo.ordenCompra +
+                    "\") VALUES('" + nom + "','"+ desc + "'," + cant + ",'" + cA + "',to_date('" + fE + "','YYYYMMDD')," + cost + ",'" + cate + "','" + oC + "');";
+
+            stmt.executeUpdate(query);
+
+            //Cerramos la conexión
+            stmt.execute("END");
+            LOGGER.log(Level.INFO, "Articulo insertado correctamente");
+            stmt.close();
+            con.close();
+        }
+        catch( Exception e ){
+        //Por si ocurre un error
+        System.out.println(e.getMessage());
+        e.printStackTrace();
+        LOGGER.log(Level.SEVERE, "Error al insertar usaurio: " + e);
+        }
+        
     }
     
     /*

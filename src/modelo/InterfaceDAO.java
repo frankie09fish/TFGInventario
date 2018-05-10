@@ -12,15 +12,15 @@ import modelo.dao.ProductoDAO;
 import java.util.*;
 
 public interface InterfaceDAO {
-    public void insertarUsuario();
+    public void insertarUsuario(int ced, String nom, String pA, String sA, String corr, String tip, String pw);
     
-    public UsuarioDAO mostrarUsuario();
+    //public UsuarioDAO mostrarUsuario();
     
     public List<UsuarioDAO> listarUsuario();
     
-    public void eliminarUsuario();
+    public void eliminarUsuario(int ced);
     
-    public void modificarUsuario();
+    public void modificarUsuario(int cedVieja,int ced, String nom, String pA, String sA, String corr, String tip);
     
     public List<ProductoDAO> getArticulosPorFechaEntrada();
     
@@ -38,7 +38,7 @@ public interface InterfaceDAO {
     
     public List<ProductoDAO> getArticulosPorNumeroActivo();
     
-    public void insertarArticulo();
+    public void insertarArticulo(String nom, String desc, int cant, String cA, String fE, float cost, String cate, String oC);
     
     public void eliminarArticulo();
     

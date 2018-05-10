@@ -21,11 +21,23 @@ import modelo.dao.UsuarioDAO;
 
 public class ImplementacionDAOPostgres implements InterfaceDAO{
 
+    //Metodo para insertar usuario en 
+    @Override
+    public void insertarUsuario(int ced, String nom, String pA, String sA, String corr, String tip, String pw) {
+        LOGGER.log(Level.INFO, "Estableciendo conexión con Base de datos");
+        Connection con = dbHelper.connectDatabase("localhost", "5432", "inventarioCentroDiurno","postgres", "postgres");
+        LOGGER.log(Level.INFO, "Insertando datos de usuario");
+        dbHelper.insertarUsuario(con, ced, nom, pA, sA, corr, tip, pw);
+    }
+
     ProductoDAO productoDAO = new ProductoDAO();
     UsuarioDAO usuarioDAO = new UsuarioDAO();
     List<ProductoDAO> listaProductos = new ArrayList<ProductoDAO>();
     List<UsuarioDAO> listaUsuarios = new ArrayList<UsuarioDAO>();
 
+     private final static Logger LOGGER = Logger.getLogger("Conexion.ImplementacionDAOPostgres");
+    
+    PostgreSQLDBHelper dbHelper = new PostgreSQLDBHelper();
 
     @Override
     public List<ProductoDAO> getArticulosPorFechaEntrada() {
@@ -68,8 +80,11 @@ public class ImplementacionDAOPostgres implements InterfaceDAO{
     }
 
     @Override
-    public void insertarArticulo() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void insertarArticulo(String nom, String desc, int cant, String cA, String fE, float cost, String cate, String oC) {
+        LOGGER.log(Level.INFO, "Estableciendo conexión con Base de datos");
+        Connection con = dbHelper.connectDatabase("localhost", "5432", "inventarioCentroDiurno","postgres", "postgres");
+        LOGGER.log(Level.INFO, "Insertando datos de articulo");
+        dbHelper.insertarArticulo(con, nom, desc, cant, cA, fE, cost, cate, oC);
     }
 
     @Override
@@ -106,33 +121,72 @@ public class ImplementacionDAOPostgres implements InterfaceDAO{
     public String getContrasena() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    private final static Logger LOGGER = Logger.getLogger("Conexion.ImplementacionDAOPostgres");
+   
     
-    PostgreSQLDBHelper dbHelper = new PostgreSQLDBHelper();
-    public void insertarUsuario(){
-        LOGGER.log(Level.INFO, "Estableciendo conexión con Base de datos");
+    
+
+    
+    
+    public UsuarioDAO mostrarUsuario(int ced){
+        UsuarioDAO usuarioObtenido = new UsuarioDAO();
+        
+        try{
         Connection con = dbHelper.connectDatabase("localhost", "5432", "inventarioCentroDiurno","postgres", "postgres");
-        LOGGER.log(Level.INFO, "Insertando datos de usuario");
-        dbHelper.insertarUsuario(con, 302360145, "Elmer", "Oriel", "Miranda", "elmeroriel@hotmail.com", "Administrador", "12345a");
-    }
-    public UsuarioDAO mostrarUsuario(){
-        Connection con = dbHelper.connectDatabase("localhost", "5433", "test","postgres", "postgres");
-        dbHelper.mostrarUsuario(con, 103780124);
+        usuarioObtenido = dbHelper.mostrarUsuario(con, ced);
+        }
+        catch(Exception e){
+            System.out.println("Error al obtener usuario: " + e);
+        }
+        System.out.println("Valores de usuario obtenido: ");
+        System.out.println("Descargando lista de usuarios: ");
+        System.out.println("Cedula: " + usuarioObtenido.getCedula());
+        System.out.println("Nombre: " + usuarioObtenido.getNombre());
+        System.out.println("Primer apellido: " + usuarioObtenido.getPrimerApellido());
+        System.out.println("Segundo apellido: " + usuarioObtenido.getSegundoApellido());
+        System.out.println("Correo: " + usuarioObtenido.getCorreo());
+        System.out.println("Tipo: " + usuarioObtenido.getTipo());
+      
         return usuarioDAO;
     }
+    
+    
+    
     public List<UsuarioDAO> listarUsuario(){
-        Connection con = dbHelper.connectDatabase("localhost", "5433", "test","postgres", "postgres");
-        dbHelper.listarUsuario(con);
+        ;
+         List<UsuarioDAO> listaValores = new ArrayList<UsuarioDAO>();
+        
+        try{
+            LOGGER.log(Level.INFO, "Estableciendo conexión con Base de datos");
+            Connection con = dbHelper.connectDatabase("localhost", "5432", "inventarioCentroDiurno","postgres", "postgres");
+            LOGGER.log(Level.INFO, "Obteniendo lista de usuarios");
+            listaValores = dbHelper.listarUsuario(con);
+           for(UsuarioDAO usuarioObtenido: listaValores){
+               System.out.println("Descargando lista de usuarios: ");
+               System.out.println("Cedula: " + usuarioObtenido.getCedula());
+               System.out.println("Nombre: " + usuarioObtenido.getNombre());
+               System.out.println("Primer apellido: " + usuarioObtenido.getPrimerApellido());
+               System.out.println("Segundo apellido: " + usuarioObtenido.getSegundoApellido());
+               System.out.println("Correo: " + usuarioObtenido.getCorreo());
+               System.out.println("Tipo: " + usuarioObtenido.getTipo());
+           }
+            
+        }
+        catch(Exception se){
+            LOGGER.log(Level.SEVERE, "Error obteniendo lista de usuarios: " + se);
+        }
+        
+         System.out.println("Valores del primero usuario: " + usuarioDAO.getCedula() );
         return listaUsuarios;
     }
-    public void eliminarUsuario(){
-        Connection con = dbHelper.connectDatabase("localhost", "5433", "test","postgres", "postgres");
-        dbHelper.eliminarUsuario(con,103780124);
+    public void eliminarUsuario(int ced){
+        Connection con = dbHelper.connectDatabase("localhost", "5432", "inventarioCentroDiurno","postgres", "postgres");
+        LOGGER.log(Level.INFO, "Eliminando datos de usuario");
+        dbHelper.eliminarUsuario(con,ced);
     }
     
-    public void modificarUsuario(){
-        Connection con = dbHelper.connectDatabase("localhost", "5433", "test","postgres", "postgres");
-        dbHelper.modificarUsuario(con,103570159,"Elsa","Solano","Aguilar", "elsa@yahoo.com" ,103570159,"Usuario", "1234b");
+    public void modificarUsuario(int cedVieja,int ced, String nom, String pA, String sA, String corr, String tip){
+        Connection con = dbHelper.connectDatabase("localhost", "5432", "inventarioCentroDiurno","postgres", "postgres");
+        dbHelper.modificarUsuario(con,cedVieja,ced,nom,pA,sA,corr ,tip);
     }
     
     public void crearSchema(){

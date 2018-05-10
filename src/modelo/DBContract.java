@@ -26,7 +26,7 @@ public class DBContract {
         public static final String cantidadProducto = "cantidad";
         public static final String codigoActivo = "codigoActivo";
         public static final String fechaEntrada = "fechaEntrada";
-        public static final String fechaSalida = "fechaSaluda";
+        public static final String fechaSalida = "fechaSalida";
         public static final String costoProducto = "costo";
         public static final String categoriaProducto = "categoria";
         public static final String idRequisicionProducto = "idRequisicion";
