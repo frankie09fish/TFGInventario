@@ -22,6 +22,7 @@ public class SistemaManejoInventarios {
         Bitacora bitacora = new Bitacora();
         ImplementacionDAOPostgres implementacionDAOPostgres = new ImplementacionDAOPostgres();
         implementacionDAOPostgres.insertarUsuario();
+        System.out.println(" Prueba de arranque en consola, luego se puede retirar: Revision 1");
         
     }
     
